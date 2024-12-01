@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 flask = "*"
+google-generativeai = "*"
+python-dotenv = "*"
 pymongo = "*"
 
 [dev-packages]
