@@ -8,26 +8,26 @@ WORKDIR /app
 
 ## Build and Install Dependencies
 
-FROM base as builder
+FROM base AS builder
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN --mount=type=cache, id=nextjs, target=/app/.next/cache pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN --mount=type=cache, id=nextjs, target=/app/.next/cache pnpm build
+RUN pnpm build
 
 ## Run the Application
 
-FROM base as runner
+FROM base AS runner
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 

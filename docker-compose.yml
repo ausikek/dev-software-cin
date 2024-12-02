@@ -6,8 +6,7 @@ services:
     image: trainify-server
     container_name: flask-server
     restart: unless-stopped
-    env_file:
-      - ./src/settings/.env
+    env_file: .env
     ports:
       - "3001:3001"
     depends_on:
@@ -17,7 +16,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    image: testify-client
+    image: trainify-client
     container_name: trainify-client
     restart: unless-stopped
     ports:
@@ -30,13 +29,11 @@ services:
     image: mongo
     container_name: trainify-db
     restart: unless-stopped
-    env_file:
-      - ./src/settings/.env
+    env_file: .env
     environment:
       - MONGO_INITDB_USERNAME=${DATABASE_USERNAME}
       - MONGO_INITDB_PASSWORD=${DATABASE_PASSWORD}
       - MONGO_INITDB_DATABASE=${DATABASE_NAME}
-      - MONGO_DATA=/var/lib/mongo:/data/db
     ports:
       - "27017:27017"
     volumes:

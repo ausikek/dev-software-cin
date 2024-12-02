@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "56e289b372fce261eedf30aaaff2c8f51134038deb8099d801374bfa9a747d9d"
+            "sha256": "158f60c6d384acc63814bc56092b3e9a84cdeab37f4c7154c67852ddeb1abeae"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -184,6 +184,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==3.1.0"
+        },
+        "flask-pymongo": {
+            "hashes": [
+                "sha256:620eb02dc8808a5fcb90f26cab6cba9d6bf497b15032ae3ca99df80366e33314",
+                "sha256:8a9577a2c6d00b49f21cb5a5a8d72561730364a2d745551a85349ab02f86fc73"
+            ],
+            "index": "pypi",
+            "version": "==2.3.0"
         },
         "google-ai-generativelanguage": {
             "hashes": [
@@ -628,7 +636,6 @@
                 "sha256:fbedc4617faa0edf423621bb0b3b8707836687161210d470e69a4184be9ca011",
                 "sha256:fdeba88c540c9ed0338c0b2062d9f81af42b18d6646b3e6dda05cf6edd46ada9"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==4.10.1"
         },

@@ -6,20 +6,26 @@ WORKDIR /app
 
 ## Build and Install Dependencies
 
-FROM base as builder
+FROM base AS builder
 
 COPY Pipfile Pipfile.lock ./
 
-RUN --mount=type=cache, id=python, target=/app/.cache pip install pipenv && pipenv install --deploy --system
+RUN pip install pipenv \
+    && pipenv requirements > requirements.txt
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install -r requirements.txt
 
 COPY . .
 
 ## Run the Application
 
-FROM base as runner
+FROM base AS runner
 
 RUN addgroup --system --gid 1001 flask-python
 RUN adduser --system --uid 1001 flask
+
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 COPY --from=builder /app ./
 
@@ -29,4 +35,4 @@ EXPOSE 3001
 
 USER flask
 
-CMD ["python", "main.py"]
+CMD ["python", "run.py"]
