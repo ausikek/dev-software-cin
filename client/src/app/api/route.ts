@@ -1,8 +1,15 @@
 import { config } from '@/lib/utils';
-import { GoogleGenerativeAI, Content } from '@google/generative-ai';
+import {
+  GoogleGenerativeAI,
+  Content,
+  GenerateContentResult,
+} from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
+import { ParsedChatHistory } from '@/types';
+import { randomUUID } from 'crypto';
 
 const chatHistory: Content[] = [];
+const parsedChatHistory: ParsedChatHistory[] = [];
 
 const genAI = new GoogleGenerativeAI(config.geminiKey);
 const model = genAI.getGenerativeModel({
@@ -14,10 +21,38 @@ const chat = model.startChat({ history: chatHistory });
 
 // Interact with Gemini API
 export async function POST(req: NextRequest) {
-  const { message } = await req.json();
-  const chatResponse = await chat.sendMessage(message);
+  try {
+    const { message } = await req.json();
+    const chatResponse = await chat.sendMessage(message);
+    console.log('Response Text: ', chatResponse.response.text());
+    handleChatHistory(message, chatResponse);
+    return NextResponse.json({
+      chatHistory: parsedChatHistory,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({
+      error: 'Error Ocurred',
+    });
+  }
+}
 
-  return NextResponse.json({
-    message: chatResponse.response.text(),
+export async function GET() {
+  return NextResponse.json({ chatHistory: parsedChatHistory });
+}
+
+function handleChatHistory(
+  userPrompt: string,
+  modelResponse: GenerateContentResult
+) {
+  parsedChatHistory.push({
+    id: randomUUID().toString(),
+    role: 'user',
+    text: userPrompt,
+  });
+  parsedChatHistory.push({
+    id: randomUUID().toString(),
+    role: 'model',
+    text: modelResponse.response.text(),
   });
 }
