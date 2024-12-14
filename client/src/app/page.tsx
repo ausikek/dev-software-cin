@@ -1,11 +1,13 @@
 'use client';
 
 import MainChat from '@/components/MainChat';
+import PromptInput from '@/components/PromptInput';
 import { ParsedChatHistory } from '@/types';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [chatHistory, setChatHistory] = useState<ParsedChatHistory[]>([]);
+  const [sentinel, setSentinel] = useState<boolean>(false);
 
   useEffect(() => {
     const getChatHistory = async () => {
@@ -15,11 +17,12 @@ export default function Home() {
     };
 
     getChatHistory();
-  }, []);
+  }, [sentinel]);
 
   return (
-    <div className='bg-[#303030] w-full h-screen'>
+    <div className='bg-[#303030] w-full h-screen flex flex-col items-center gap-8'>
       <MainChat chatHistory={chatHistory} />
+      <PromptInput setSentinel={setSentinel} />
     </div>
   );
 }
