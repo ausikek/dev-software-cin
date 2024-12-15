@@ -16,4 +16,5 @@ const getEnvironmentVariable = (environmentVariable: string): string => {
 
 export const config = {
   geminiKey: getEnvironmentVariable('GEMINI_KEY'),
+  apiURL: getEnvironmentVariable('NEXT_PUBLIC_API_URL'),
 };

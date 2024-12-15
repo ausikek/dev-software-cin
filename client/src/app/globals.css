@@ -86,6 +86,11 @@ body {
   width: 100%;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(133, 101, 101, 0.6) transparent;
+}
+
 @layer base {
   * {
     @apply border-border;
