@@ -13,14 +13,23 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
+import { Content } from '@google/generative-ai';
 import { config } from '@/lib/utils';
+import { ParsedChatHistory } from '@/types';
 
 interface PromptInputProps {
+  parsedChatHistory: ParsedChatHistory[];
   setSentinel: Dispatch<SetStateAction<boolean>>;
+  setParsedChatHistory: Dispatch<SetStateAction<ParsedChatHistory[]>>;
 }
 
-export default function PromptInput({ setSentinel }: PromptInputProps) {
+export default function PromptInput({
+  parsedChatHistory,
+  setSentinel,
+  setParsedChatHistory,
+}: PromptInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chatHistory, setChatHistory] = useState<Content[]>([]);
 
   const formSchema = z.object({
     prompt: z.string().min(1, {
@@ -38,11 +47,27 @@ export default function PromptInput({ setSentinel }: PromptInputProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      await fetch(`${config.apiURL}/api`, {
+      const res = await fetch(`${config.apiURL}/api`, {
         method: 'POST',
-        body: JSON.stringify({ message: data.prompt }),
+        body: JSON.stringify({
+          message: data.prompt,
+          chatHistory: chatHistory,
+          parsedChatHistory: parsedChatHistory,
+        }),
       });
+
+      const payload = await res.json();
+
+      const newChatHistory: Content[] = [...payload.chatHistory];
+
+      const newParsedChatHistory: ParsedChatHistory[] = [
+        ...payload.parsedChatHistory,
+      ];
+
+      setChatHistory(newChatHistory);
+      setParsedChatHistory(newParsedChatHistory);
       setSentinel((prev) => !prev);
+
       form.reset();
     } catch (error) {
       console.error('Error submitting form:', error);

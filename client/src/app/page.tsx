@@ -3,27 +3,23 @@
 import MainChat from '@/components/MainChat';
 import PromptInput from '@/components/PromptInput';
 import { ParsedChatHistory } from '@/types';
-import { useEffect, useState } from 'react';
-import { config } from '@/lib/utils';
+import { useState } from 'react';
 
 export default function Home() {
-  const [chatHistory, setChatHistory] = useState<ParsedChatHistory[]>([]);
-  const [sentinel, setSentinel] = useState<boolean>(false);
-
-  useEffect(() => {
-    const getChatHistory = async () => {
-      const response = await fetch(`${config.apiURL}/api`);
-      const chatHistory = await response.json();
-      setChatHistory(chatHistory.chatHistory);
-    };
-
-    getChatHistory();
-  }, [sentinel]);
+  const [parsedChatHistory, setParsedChatHistory] = useState<
+    ParsedChatHistory[]
+  >([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setSentinel] = useState<boolean>(false);
 
   return (
     <div className='bg-[#303030] w-full h-screen flex flex-col items-center gap-8'>
-      <MainChat chatHistory={chatHistory} />
-      <PromptInput setSentinel={setSentinel} />
+      <MainChat chatHistory={parsedChatHistory} />
+      <PromptInput
+        setSentinel={setSentinel}
+        parsedChatHistory={parsedChatHistory}
+        setParsedChatHistory={setParsedChatHistory}
+      />
     </div>
   );
 }
