@@ -1,15 +1,12 @@
 import { config } from '@/lib/utils';
 import {
   GoogleGenerativeAI,
-  Content,
   GenerateContentResult,
+  Content,
 } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { ParsedChatHistory } from '@/types';
 import { randomUUID } from 'crypto';
-
-const chatHistory: Content[] = [];
-const parsedChatHistory: ParsedChatHistory[] = [];
 
 const genAI = new GoogleGenerativeAI(config.geminiKey);
 const model = genAI.getGenerativeModel({
@@ -17,17 +14,28 @@ const model = genAI.getGenerativeModel({
   systemInstruction:
     'Você é um personal trainer, formado em educação física e com vastos conhecimentos sobre todo tipo de exercício físico que o usuário deseja praticar ou deve praticar, de acordo com sua inferência. Com base nos dados fornecidos pelo usuário, você pode sugerir exercícios, corrigir posturas e dar dicas de alimentação saudável. Responda somente em português.',
 });
-const chat = model.startChat({ history: chatHistory });
 
-// Interact with Gemini API
 export async function POST(req: NextRequest) {
   try {
-    const { message } = await req.json();
+    const { message, chatHistory, parsedChatHistory } = await req.json();
+
+    const newChatHistory: Content[] = [...chatHistory];
+
+    const chat = model.startChat({ history: newChatHistory });
     const chatResponse = await chat.sendMessage(message);
+
     console.log('Response Text: ', chatResponse.response.text());
-    handleChatHistory(message, chatResponse);
+
+    const newParsedChatHistory: ParsedChatHistory[] = handleChatHistory(
+      message,
+      chatResponse,
+      parsedChatHistory
+    );
+    console.log(newChatHistory, newParsedChatHistory);
+
     return NextResponse.json({
-      chatHistory: parsedChatHistory,
+      chatHistory: newChatHistory,
+      parsedChatHistory: newParsedChatHistory,
     });
   } catch (error) {
     console.log(error);
@@ -38,21 +46,26 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json({ chatHistory: parsedChatHistory });
+  return NextResponse.json({ smileyFace: 'Hey :)' });
 }
 
 function handleChatHistory(
   userPrompt: string,
-  modelResponse: GenerateContentResult
+  modelResponse: GenerateContentResult,
+  array: ParsedChatHistory[]
 ) {
-  parsedChatHistory.push({
+  const temp_array = [...array];
+
+  temp_array.push({
     id: randomUUID().toString(),
     role: 'user',
     text: userPrompt,
   });
-  parsedChatHistory.push({
+  temp_array.push({
     id: randomUUID().toString(),
     role: 'model',
     text: modelResponse.response.text(),
   });
+
+  return temp_array;
 }
