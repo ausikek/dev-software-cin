@@ -21,7 +21,7 @@ export default function MainChat({ chatHistory }: MainChatProps) {
   return (
     <ScrollArea>
       <div
-        className='flex flex-col gap-10 py-10 px-44 h-[45rem]'
+        className='flex flex-col gap-10 py-10 px-44 h-[42rem]'
         ref={scrollRef}
       >
         {chatHistory.map((content) => {

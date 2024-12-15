@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
+import { config } from '@/lib/utils';
 
 interface PromptInputProps {
   setSentinel: Dispatch<SetStateAction<boolean>>;
@@ -37,7 +38,7 @@ export default function PromptInput({ setSentinel }: PromptInputProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      await fetch('http://localhost:3000/api', {
+      await fetch(`${config.apiURL}/api`, {
         method: 'POST',
         body: JSON.stringify({ message: data.prompt }),
       });
@@ -79,7 +80,7 @@ export default function PromptInput({ setSentinel }: PromptInputProps) {
                   <Button
                     type='submit'
                     size='icon'
-                    className='bg-[#464646] hover:bg-[#5a5a5a] text-white self-end'
+                    className='bg-[#464646] hover:bg-[#5a5a5a] text-white self-end shadow-none'
                     disabled={isSubmitting}
                   >
                     <Send className='h-4 w-4' />
