@@ -1,5 +1,4 @@
 import { Brain, Dumbbell, LogOut, MessageSquare } from 'lucide-react';
-
 import {
   Sidebar,
   SidebarContent,
@@ -10,11 +9,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import ChatButton from '../ChatButton';
+import ChatButton from '@/components/ChatButton';
 
 export default function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className='border-[#161616]'>
       <SidebarContent className='bg-[#161616]'>
         <SidebarGroup>
           <SidebarGroupLabel className='text-white flex flex-row gap-2'>

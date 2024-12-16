@@ -30,9 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider className='bg-[#303030] pt-2 pl-2'>
+        <SidebarProvider className='bg-[#303030] pt-2 pl-2' defaultOpen={false}>
           <AppSidebar />
-          <main className='w-screen h-[100vh-100rem]'>
+          <main className='w-screen'>
             <SidebarTrigger className='bg-[#303030] hover:bg-[#404040] text-white hover:text-white' />
             {children}
           </main>
