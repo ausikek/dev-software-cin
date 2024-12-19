@@ -61,7 +61,7 @@ pnpm install
 pnpm dev
 ```
 
-**Você precisa ter Node e NPM instalados em sua máquina.**
+**Você precisa ter Node e NPM instalados em sua máquina. Deve ser criado, além disso, um arquivo .env.local na raiz de client com as entradas GEMINI_KEY e NEXT_PUBLIC_API_URL. Na segunda, coloque http://localhost:3000.**
 
 ## Deploy
 
