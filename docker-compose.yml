@@ -1,43 +1,30 @@
 services:
-  server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    image: trainify-server
-    container_name: flask-server
-    restart: unless-stopped
-    env_file: .env
-    ports:
-      - "3001:3001"
-    depends_on:
-      - db
-
   client:
     build:
-      context: ./client
+      context: .
       dockerfile: Dockerfile
     image: trainify-client
     container_name: trainify-client
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
-      - server
       - db
 
   db:
-    image: mongo
+    image: postgres
     container_name: trainify-db
     restart: unless-stopped
     env_file: .env
     environment:
-      - MONGO_INITDB_USERNAME=${DATABASE_USERNAME}
-      - MONGO_INITDB_PASSWORD=${DATABASE_PASSWORD}
-      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_DB}
+      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
-      - "27017:27017"
+      - '${DATABASE_PORT}:5432'
     volumes:
-      - /var/lib/mongo:/data/db
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  mongo-data:
+  pgdata:
