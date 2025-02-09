@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, LogIn, LogOut, MessageSquare } from 'lucide-react';
+import { Brain, LogIn, MessageSquare } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -16,9 +16,10 @@ import { SelectScrollable } from '../SelectTraining';
 import { useSession } from 'next-auth/react';
 import { LoginModal } from '../LoginModal';
 import LogoutButton from '../LogoutButton';
+import Link from 'next/link';
 
 export default function AppSidebar() {
-  const session = useSession();
+  const { status } = useSession();
 
   return (
     <Sidebar className='border-[#161616]'>
@@ -31,20 +32,20 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <div className='flex flex-col gap-2 pt-5'>
+                <Link className='flex flex-col gap-2 pt-5' href={'/'}>
                   <ChatButton variant='button'>
                     <MessageSquare />
                     Novo Chat
                   </ChatButton>
                   <SelectScrollable />
-                </div>
+                </Link>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className='bg-[#161616]'>
-        {session.data ? (
+        {status === 'authenticated' ? (
           <LogoutButton />
         ) : (
           <LoginModal triggerText='Entrar' icon={<LogIn />} />

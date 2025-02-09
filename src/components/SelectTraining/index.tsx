@@ -12,9 +12,9 @@ import { useSession } from 'next-auth/react';
 import { LoginModal } from '../LoginModal';
 
 export function SelectScrollable() {
-  const session = useSession();
+  const { status } = useSession();
 
-  if (session.data) {
+  if (status === 'authenticated') {
     return (
       <Select>
         <SelectTrigger className='w-[13rem] h-[2.5rem] rounded-3xl bg-[#464646] hover:bg-[#464646]/90 text-white border-0'>

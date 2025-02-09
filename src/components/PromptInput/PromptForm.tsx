@@ -1,22 +1,10 @@
-import type { KeyboardEvent } from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { Form, useForm } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormMessage } from '../ui/form';
+import { Textarea } from '../ui/textarea';
+import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-interface PromptInputProps {
-  isSubmitting: boolean;
-  onSubmit: (prompt: string) => Promise<void>;
-}
 
 const formSchema = z.object({
   prompt: z.string().min(1, {
@@ -24,10 +12,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function PromptInput({
-  isSubmitting,
-  onSubmit,
-}: PromptInputProps) {
+const PromptForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,21 +20,16 @@ export default function PromptInput({
     },
   });
 
-  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    await onSubmit(data.prompt);
-    form.reset();
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      form.handleSubmit(handleSubmit)();
+      form.handleSubmit(onSubmit)();
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name='prompt'
@@ -82,4 +62,6 @@ export default function PromptInput({
       </form>
     </Form>
   );
-}
+};
+
+export { PromptForm };
