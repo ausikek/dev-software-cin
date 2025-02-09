@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import AppSidebar from '@/components/Sidebar';
+import NextAuthSessionProvider from '@/providers/SessionProvider';
+import { Toaster } from 'sonner';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -30,13 +32,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider className='bg-[#303030] pt-2 pl-2' defaultOpen={false}>
-          <AppSidebar />
-          <main className='w-screen'>
-            <SidebarTrigger className='bg-[#303030] hover:bg-[#404040] text-white hover:text-white' />
-            {children}
-          </main>
-        </SidebarProvider>
+        <NextAuthSessionProvider>
+          <SidebarProvider
+            className='bg-[#303030] pt-2 pl-2'
+            defaultOpen={false}
+          >
+            <AppSidebar />
+            <main className='w-screen'>
+              <SidebarTrigger className='bg-[#303030] hover:bg-[#404040] text-white hover:text-white' />
+              {children}
+              <Toaster richColors />
+            </main>
+          </SidebarProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

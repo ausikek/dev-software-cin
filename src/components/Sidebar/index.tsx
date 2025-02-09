@@ -1,4 +1,6 @@
-import { Brain, Dumbbell, LogOut, MessageSquare } from 'lucide-react';
+'use client';
+
+import { Brain, LogIn, LogOut, MessageSquare } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -10,8 +12,14 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import ChatButton from '@/components/ChatButton';
+import { SelectScrollable } from '../SelectTraining';
+import { useSession } from 'next-auth/react';
+import { LoginModal } from '../LoginModal';
+import LogoutButton from '../LogoutButton';
 
 export default function AppSidebar() {
+  const session = useSession();
+
   return (
     <Sidebar className='border-[#161616]'>
       <SidebarContent className='bg-[#161616]'>
@@ -28,10 +36,7 @@ export default function AppSidebar() {
                     <MessageSquare />
                     Novo Chat
                   </ChatButton>
-                  <ChatButton variant='button'>
-                    <Dumbbell />
-                    Meus Treinos
-                  </ChatButton>
+                  <SelectScrollable />
                 </div>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -39,10 +44,11 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className='bg-[#161616]'>
-        <ChatButton variant='button'>
-          <LogOut />
-          Sair
-        </ChatButton>
+        {session.data ? (
+          <LogoutButton />
+        ) : (
+          <LoginModal triggerText='Entrar' icon={<LogIn />} />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

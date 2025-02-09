@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       chatResponse,
       parsedChatHistory
     );
-    console.log(newChatHistory, newParsedChatHistory);
+    console.log(newParsedChatHistory);
 
     return NextResponse.json({
       chatHistory: newChatHistory,
