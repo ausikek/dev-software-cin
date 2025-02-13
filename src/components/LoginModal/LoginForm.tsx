@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,19 +16,20 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { signIn } from 'next-auth/react';
 import { toast } from 'sonner';
+import { signIn } from 'next-auth/react';
 
 const formSchema = z.object({
   email: z.string().email({
-    message: 'Insira um email válido.',
+    message: 'Please enter a valid email address.',
   }),
   password: z.string().min(8, {
-    message: 'A senha precisa ter no mínimo 8 caracteres.',
+    message: 'Password must be at least 8 characters long.',
   }),
 });
 
-export function LoginForm() {
+export function LoginForm({ onToggleMode }: { onToggleMode: () => void }) {
+  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,8 +39,6 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Handle form submission
-
     const result = await signIn('credentials', {
       redirect: false,
       email: values.email,
@@ -54,7 +55,7 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
         <FormField
           control={form.control}
           name='email'
@@ -75,17 +76,42 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input
-                  type='password'
-                  placeholder='Insira sua senha'
-                  {...field}
-                />
+                <div className='relative'>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder='Insira sua senha'
+                    {...field}
+                  />
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='sm'
+                    className='absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent'
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                  >
+                    {showPassword ? (
+                      <EyeOff className='h-4 w-4' />
+                    ) : (
+                      <Eye className='h-4 w-4' />
+                    )}
+                  </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type='submit'>Entrar</Button>
+        <Button type='submit' className='w-full'>
+          Entrar
+        </Button>
+        <div className='text-center'>
+          <Button variant='link' onClick={onToggleMode}>
+            Não possui uma conta? Registre-se
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -29,10 +29,7 @@ class UserControllers implements IUserControllers {
         status: serviceResponse.status,
       });
     } catch (error) {
-      return NextResponse.json(
-        { error: (error as Error).message },
-        { status: 500 }
-      );
+      return errorHandler(error);
     }
   }
 
@@ -48,10 +45,7 @@ class UserControllers implements IUserControllers {
         status: serviceResponse.status,
       });
     } catch (error) {
-      return NextResponse.json(
-        { error: (error as Error).message },
-        { status: 500 }
-      );
+      return errorHandler(error);
     }
   }
 
@@ -69,10 +63,7 @@ class UserControllers implements IUserControllers {
         status: serviceResponse.status,
       });
     } catch (error) {
-      return NextResponse.json(
-        { error: (error as Error).message },
-        { status: 500 }
-      );
+      return errorHandler(error);
     }
   }
 
@@ -90,10 +81,7 @@ class UserControllers implements IUserControllers {
         status: serviceResponse.status,
       });
     } catch (error) {
-      return NextResponse.json(
-        { error: (error as Error).message },
-        { status: 500 }
-      );
+      return errorHandler(error);
     }
   }
 
@@ -109,8 +97,7 @@ class UserControllers implements IUserControllers {
         status: serviceResponse.status,
       });
     } catch (error) {
-      if (error instanceof Error)
-        return NextResponse.json({ error: error.message }, { status: 500 });
+      return errorHandler(error);
     }
   }
 }
