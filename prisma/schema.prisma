@@ -18,16 +18,18 @@ model User {
   name        String
   email       String        @unique
   password    String
-  chatHistory chatHistory[]
+  chatHistory ChatHistory[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
 
-model chatHistory {
-  id        String   @id @default(uuid())
-  history   Json[]
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
+model ChatHistory {
+  id            String   @id @default(uuid())
+  title         String
+  history       Json[]
+  parsedHistory Json[]
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  User          User     @relation(fields: [userId], references: [id])
 }

@@ -3,9 +3,14 @@
 import MainChat from '@/components/MainChat';
 import PromptInput from '@/components/PromptInput';
 import { useChat } from '@/hooks/use-chat';
+import { useParams } from 'next/navigation';
 
 export default function Home() {
-  const { parsedChatHistory, isSubmitting, submitPrompt } = useChat();
+  const params = useParams();
+
+  const chatId = params?.id as string;
+
+  const { parsedChatHistory, isSubmitting, submitPrompt } = useChat(chatId);
 
   return (
     <div className='bg-[#303030] w-full h-screen flex flex-col items-center gap-8'>

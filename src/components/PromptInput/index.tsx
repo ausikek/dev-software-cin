@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
@@ -12,31 +12,22 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dispatch, SetStateAction } from 'react';
-import { Content } from '@google/generative-ai';
-import { config } from '@/lib/utils';
-import { ParsedChatHistory } from '@/types';
 
 interface PromptInputProps {
-  parsedChatHistory: ParsedChatHistory[];
-  setSentinel: Dispatch<SetStateAction<boolean>>;
-  setParsedChatHistory: Dispatch<SetStateAction<ParsedChatHistory[]>>;
+  isSubmitting: boolean;
+  onSubmit: (prompt: string) => Promise<void>;
 }
 
+const formSchema = z.object({
+  prompt: z.string().min(1, {
+    message: 'Insira um prompt',
+  }),
+});
+
 export default function PromptInput({
-  parsedChatHistory,
-  setSentinel,
-  setParsedChatHistory,
+  isSubmitting,
+  onSubmit,
 }: PromptInputProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Content[]>([]);
-
-  const formSchema = z.object({
-    prompt: z.string().min(1, {
-      message: 'Insira um prompt',
-    }),
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,48 +35,21 @@ export default function PromptInput({
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(`${config.apiURL}/api`, {
-        method: 'POST',
-        body: JSON.stringify({
-          message: data.prompt,
-          chatHistory: chatHistory,
-          parsedChatHistory: parsedChatHistory,
-        }),
-      });
-
-      const payload = await res.json();
-
-      const newChatHistory: Content[] = [...payload.chatHistory];
-
-      const newParsedChatHistory: ParsedChatHistory[] = [
-        ...payload.parsedChatHistory,
-      ];
-
-      setChatHistory(newChatHistory);
-      setParsedChatHistory(newParsedChatHistory);
-      setSentinel((prev) => !prev);
-
-      form.reset();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    await onSubmit(data.prompt);
+    form.reset();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      form.handleSubmit(onSubmit)();
+      form.handleSubmit(handleSubmit)();
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <FormField
           control={form.control}
           name='prompt'

@@ -1,11 +1,11 @@
 import { config } from '@/lib/utils';
 import {
   GoogleGenerativeAI,
-  GenerateContentResult,
-  Content,
+  type GenerateContentResult,
+  type Content,
 } from '@google/generative-ai';
-import { NextRequest, NextResponse } from 'next/server';
-import { ParsedChatHistory } from '@/types';
+import { type NextRequest, NextResponse } from 'next/server';
+import type { ParsedChatHistory } from '@/types';
 import { randomUUID } from 'crypto';
 
 const genAI = new GoogleGenerativeAI(config.geminiKey);
@@ -24,14 +24,10 @@ export async function POST(req: NextRequest) {
     const chat = model.startChat({ history: newChatHistory });
     const chatResponse = await chat.sendMessage(message);
 
-    console.log('Response Text: ', chatResponse.response.text());
-
     const newParsedChatHistory: ParsedChatHistory[] = handleChatHistory(
-      message,
       chatResponse,
       parsedChatHistory
     );
-    console.log(newChatHistory, newParsedChatHistory);
 
     return NextResponse.json({
       chatHistory: newChatHistory,
@@ -40,7 +36,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.log(error);
     return NextResponse.json({
-      error: 'Error Ocurred',
+      error: 'Error Occurred',
     });
   }
 }
@@ -50,17 +46,11 @@ export async function GET() {
 }
 
 function handleChatHistory(
-  userPrompt: string,
   modelResponse: GenerateContentResult,
   array: ParsedChatHistory[]
 ) {
   const temp_array = [...array];
 
-  temp_array.push({
-    id: randomUUID().toString(),
-    role: 'user',
-    text: userPrompt,
-  });
   temp_array.push({
     id: randomUUID().toString(),
     role: 'model',
