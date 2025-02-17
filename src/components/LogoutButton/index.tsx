@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react';
 import ChatButton from '../ChatButton';
 import { signOut } from 'next-auth/react';
 import { toast } from 'sonner';
+import { redirect } from 'next/navigation';
 
 export default function LogoutButton() {
   const handleLogout = async () => {
@@ -9,6 +10,8 @@ export default function LogoutButton() {
       redirect: false,
     });
     toast.success('Usuário Deslogado com sucesso');
+
+    redirect('/');
   };
 
   return (

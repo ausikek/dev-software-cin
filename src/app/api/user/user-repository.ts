@@ -21,6 +21,7 @@ export class UserRepository implements IUserRepository {
   async read(id: string) {
     return await prisma.user.findUnique({
       where: { id: id },
+      include: { chatHistory: true },
     });
   }
 

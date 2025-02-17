@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,10 @@ import ChatButton from '../ChatButton';
 
 interface LoginModalProps {
   triggerText?: string;
+  icon?: React.ReactNode;
 }
 
-export function LoginModal({ triggerText = 'Log in' }: LoginModalProps) {
+export function LoginModal({ triggerText = 'Log in', icon }: LoginModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'login' | 'register'>('login');
 
@@ -25,12 +26,13 @@ export function LoginModal({ triggerText = 'Log in' }: LoginModalProps) {
     setMode(mode === 'login' ? 'register' : 'login');
   };
 
-  console.log(mode);
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <ChatButton variant='button'>{triggerText}</ChatButton>
+        <ChatButton variant='button'>
+          {icon}
+          {triggerText}
+        </ChatButton>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
