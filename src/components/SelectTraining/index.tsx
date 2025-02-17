@@ -23,7 +23,9 @@ export function SelectScrollable() {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const { data: user, isLoading } = useSWR<
     User & { chatHistory: ChatHistory[] }
-  >(status === 'authenticated' ? `/api/user/${data.user.id}` : null, fetcher);
+  >(status === 'authenticated' ? `/api/user/${data.user.id}` : null, fetcher, {
+    refreshInterval: 5000,
+  });
 
   const handleValueChange = (chatId: string) => {
     setSelectedValue(chatId);

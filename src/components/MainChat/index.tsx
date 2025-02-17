@@ -5,6 +5,8 @@ import type { ParsedChatHistory } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MainChatProps {
   chatHistory: ParsedChatHistory[];
@@ -39,9 +41,14 @@ export default function MainChat({ chatHistory }: MainChatProps) {
                   <ChatButton variant='bubble'>{content.text}</ChatButton>
                 </div>
               ) : (
-                <p className='flex justify-start w-auto min-w-[13rem] max-w-full text-white'>
-                  {content.text}
-                </p>
+                <div className='flex justify-start w-auto min-w-[13rem] max-w-full text-white'>
+                  <ReactMarkdown
+                    className='prose prose-invert'
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {content.text}
+                  </ReactMarkdown>
+                </div>
               )}
             </motion.div>
           ))}

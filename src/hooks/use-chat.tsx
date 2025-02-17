@@ -66,14 +66,16 @@ export function useChat(chatId?: string) {
           const res = await fetch(`${config.apiURL}/api/chats`, {
             method: 'POST',
             body: JSON.stringify({
-              title: 'Test',
+              title: `Treino de ${new Date().toLocaleDateString('pt-BR')}`,
               history: modelData.chatHistory,
               parsedHistory: modelData.parsedChatHistory,
               userId: session.user.id,
             }),
           });
           const newChatData = await res.json();
-          router.push(`/chat/${newChatData.chatId}`);
+          setTimeout(() => {
+            router.push(`/chats/${newChatData.id}`);
+          }, 3000);
         }
       }
     } catch (error) {
