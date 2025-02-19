@@ -117,11 +117,12 @@ export class UserServices implements IUserServices {
 
   async delete(id: string): Promise<IUserServicesReturnPayload | Error> {
     try {
-      const user = await this.userRepository.delete(id);
+      const userExists = await this.userRepository.read(id);
 
-      if (!user) {
+      if (!userExists) {
         return { payload: 'User not found', status: 404 };
       }
+      const user = await this.userRepository.delete(id);
 
       return { payload: user, status: 200 };
     } catch (error) {

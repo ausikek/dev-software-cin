@@ -1,6 +1,6 @@
-import prisma from '@/database/database';
-import { ChatHistory } from '@prisma/client';
+import { ChatHistory, Prisma, PrismaClient } from '@prisma/client';
 import { TChatDTO, TUpdateChatDTO } from './chat-dto';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 export interface IChatRepository {
   readAll(): Promise<ChatHistory[]>;
@@ -12,27 +12,42 @@ export interface IChatRepository {
 }
 
 export class ChatRepository implements IChatRepository {
+  private prismaClient: PrismaClient<
+    Prisma.PrismaClientOptions,
+    never,
+    DefaultArgs
+  >;
+
+  constructor(
+    prismaClient: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
+  ) {
+    this.prismaClient = prismaClient;
+  }
+
   async readAll() {
-    return await prisma.chatHistory.findMany();
+    return await this.prismaClient.chatHistory.findMany();
   }
 
   async read(id: string) {
-    return await prisma.chatHistory.findUnique({ where: { id } });
+    return await this.prismaClient.chatHistory.findUnique({ where: { id } });
   }
 
   async readByUserId(userId: string) {
-    return await prisma.chatHistory.findMany({ where: { userId } });
+    return await this.prismaClient.chatHistory.findMany({ where: { userId } });
   }
 
   async create(payload: TChatDTO) {
-    return await prisma.chatHistory.create({ data: payload });
+    return await this.prismaClient.chatHistory.create({ data: payload });
   }
 
   async update(id: string, payload: TUpdateChatDTO) {
-    return await prisma.chatHistory.update({ where: { id }, data: payload });
+    return await this.prismaClient.chatHistory.update({
+      where: { id },
+      data: payload,
+    });
   }
 
   async delete(id: string) {
-    return await prisma.chatHistory.delete({ where: { id } });
+    return await this.prismaClient.chatHistory.delete({ where: { id } });
   }
 }
