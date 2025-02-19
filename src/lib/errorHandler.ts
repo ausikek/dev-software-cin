@@ -33,7 +33,7 @@ export const errorHandler = (error: unknown) => {
     logger.error('Erro interno', error);
 
     return NextResponse.json(
-      { message: (error as Error).message, pog: (error as Error).name },
+      { message: (error as Error).message, name: (error as Error).name },
       { status: 500 }
     );
   }

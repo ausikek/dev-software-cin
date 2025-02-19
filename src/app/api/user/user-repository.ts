@@ -1,6 +1,6 @@
-import prisma from '@/database/database';
 import { TUpdateUserDTO, TUserDTO } from './user-dto';
-import { User } from '@prisma/client';
+import { Prisma, PrismaClient, User } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 export interface IUserRepository {
   readAll(): Promise<User[]>;
@@ -12,34 +12,47 @@ export interface IUserRepository {
 }
 
 export class UserRepository implements IUserRepository {
-  constructor() {}
+  private prismaClient: PrismaClient<
+    Prisma.PrismaClientOptions,
+    never,
+    DefaultArgs
+  >;
+
+  constructor(
+    prismaClient: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
+  ) {
+    this.prismaClient = prismaClient;
+  }
 
   async readAll() {
-    return await prisma.user.findMany();
+    return await this.prismaClient.user.findMany();
   }
 
   async read(id: string) {
-    return await prisma.user.findUnique({
+    return await this.prismaClient.user.findUnique({
       where: { id: id },
       include: { chatHistory: true },
     });
   }
 
   async readByEmail(email: string) {
-    return await prisma.user.findUnique({
+    return await this.prismaClient.user.findUnique({
       where: { email: email },
     });
   }
 
   async create(payload: TUserDTO) {
-    return await prisma.user.create({ data: payload });
+    return await this.prismaClient.user.create({ data: payload });
   }
 
   async update(payload: TUpdateUserDTO, id: string) {
-    return await prisma.user.update({ data: payload, where: { id: id } });
+    return await this.prismaClient.user.update({
+      data: payload,
+      where: { id: id },
+    });
   }
 
   async delete(id: string) {
-    return await prisma.user.delete({ where: { id: id } });
+    return await this.prismaClient.user.delete({ where: { id: id } });
   }
 }
