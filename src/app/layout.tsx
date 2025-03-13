@@ -28,17 +28,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' className='h-full'>
+      <head>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <NextAuthSessionProvider>
-          <SidebarProvider
-            className='bg-[#303030] pt-2 pl-2'
-            defaultOpen={false}
-          >
+          <SidebarProvider className='bg-[#303030] pl-2' defaultOpen={false}>
             <AppSidebar />
-            <main className='w-screen'>
+            <main className='w-full h-full pt-2 flex flex-col'>
               <SidebarTrigger className='bg-[#303030] hover:bg-[#404040] text-white hover:text-white' />
               {children}
               <Toaster richColors />

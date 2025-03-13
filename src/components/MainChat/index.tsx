@@ -19,41 +19,43 @@ export default function MainChat({ chatHistory }: MainChatProps) {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [scrollRef]);
+  }, [chatHistory]);
 
   return (
-    <ScrollArea>
-      <div
-        className='flex flex-col gap-10 py-10 px-44 h-[42rem]'
-        ref={scrollRef}
-      >
-        <AnimatePresence>
-          {chatHistory.map((content) => (
-            <motion.div
-              key={content.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {content.role === 'user' ? (
-                <div className='flex justify-end'>
-                  <ChatButton variant='bubble'>{content.text}</ChatButton>
-                </div>
-              ) : (
-                <div className='flex justify-start w-auto min-w-[13rem] max-w-full text-white'>
-                  <ReactMarkdown
-                    className='prose prose-invert'
-                    remarkPlugins={[remarkGfm]}
-                  >
-                    {content.text}
-                  </ReactMarkdown>
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-    </ScrollArea>
+    <div className='h-[42rem]'>
+      <ScrollArea className='h-full w-full'>
+        <div
+          className='flex flex-col gap-6 md:gap-10 py-4 md:py-10 px-4 md:px-16 lg:px-44 pb-4'
+          ref={scrollRef}
+        >
+          <AnimatePresence>
+            {chatHistory.map((content) => (
+              <motion.div
+                key={content.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {content.role === 'user' ? (
+                  <div className='flex justify-end'>
+                    <ChatButton variant='bubble'>{content.text}</ChatButton>
+                  </div>
+                ) : (
+                  <div className='flex justify-start w-auto min-w-[13rem] max-w-full text-white'>
+                    <ReactMarkdown
+                      className='prose prose-invert prose-sm md:prose break-words max-w-full'
+                      remarkPlugins={[remarkGfm]}
+                    >
+                      {content.text}
+                    </ReactMarkdown>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

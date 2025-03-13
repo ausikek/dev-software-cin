@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 interface PromptInputProps {
   isSubmitting: boolean;
   onSubmit: (prompt: string) => Promise<void>;
+  setFirstMessage: (value: boolean) => void;
 }
 
 const formSchema = z.object({
@@ -27,6 +28,7 @@ const formSchema = z.object({
 export default function PromptInput({
   isSubmitting,
   onSubmit,
+  setFirstMessage,
 }: PromptInputProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,6 +39,7 @@ export default function PromptInput({
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     await onSubmit(data.prompt);
+    setFirstMessage(false);
     form.reset();
   };
 
@@ -49,12 +52,15 @@ export default function PromptInput({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className='w-full flex justify-center px-4 py-2'
+      >
         <FormField
           control={form.control}
           name='prompt'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className='w-full max-w-3xl'>
               <div className='h-5'>
                 <FormMessage />
               </div>
@@ -63,7 +69,7 @@ export default function PromptInput({
                   <Textarea
                     {...field}
                     placeholder='Fale algo para o Trainify!'
-                    className='w-[50rem] h-[5rem] bg-[#464646] text-white border-0 rounded-2xl resize-none p-4 pr-16 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-700 outline-none shadow-none'
+                    className='w-full min-h-[3rem] max-h-20 bg-[#464646] text-white border-0 rounded-2xl resize-none p-4 pr-16 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-700 outline-none shadow-none'
                     onKeyDown={handleKeyDown}
                   />
                   <Button
