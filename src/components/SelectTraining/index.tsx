@@ -1,69 +1,75 @@
 'use client';
-
-import * as React from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@/components/ui/select';
-import { Dumbbell } from 'lucide-react';
+import { ChevronDown, Dumbbell } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
-import { ChatHistory, User } from '@prisma/client';
-import ChatButton from '../ChatButton';
+import type { ChatHistory, User } from '@prisma/client';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
-export function SelectScrollable() {
+export function WorkoutCollapsible() {
   const { status, data } = useSession();
-  const router = useRouter();
-  const [selectedValue, setSelectedValue] = useState<string>('');
   const { data: user, isLoading } = useSWR<
     User & { chatHistory: ChatHistory[] }
   >(status === 'authenticated' ? `/api/user/${data.user.id}` : null, fetcher, {
     refreshInterval: 5000,
   });
+  const router = useRouter();
 
-  const handleValueChange = (chatId: string) => {
-    setSelectedValue(chatId);
+  const navigateToWorkout = (chatId: string) => {
+    // Use direct navigation
     router.push(`/chats/${chatId}`);
-    // Reset the selection after navigation
-    setTimeout(() => setSelectedValue(''), 100);
   };
 
   if (status === 'authenticated') {
     return (
-      <Select value={selectedValue} onValueChange={handleValueChange}>
-        <SelectTrigger className='w-[13rem] h-[2.5rem] rounded-3xl bg-[#464646] hover:bg-[#464646]/90 text-white border-0'>
-          <div className='flex flex-row items-center gap-2 pl-10'>
-            <Dumbbell width={20} height={20} />
-            Meus treinos
+      <Collapsible className='w-full'>
+        <CollapsibleTrigger className='flex items-center justify-between w-full px-3 py-2 text-sm hover:bg-sidebar-accent/50 transition-colors text-white'>
+          <div className='flex items-center gap-2'>
+            <Dumbbell className='h-4 w-4' />
+            <span>Meus treinos</span>
           </div>
-        </SelectTrigger>
-        <SelectContent>
-          {user?.chatHistory.length && !isLoading
-            ? user.chatHistory.map((chat) => (
-                <SelectItem value={chat.id} key={chat.id}>
+          <ChevronDown className='h-4 w-4 transition-transform ui-open:rotate-180' />
+        </CollapsibleTrigger>
+        <CollapsibleContent className='pl-6 pr-2 py-1'>
+          {!isLoading && user?.chatHistory && user.chatHistory.length > 0 ? (
+            <div className='max-h-48 overflow-y-auto'>
+              {user.chatHistory.map((chat) => (
+                <div
+                  key={chat.id}
+                  onClick={() => navigateToWorkout(chat.id)}
+                  className='px-2 py-1.5 text-xs cursor-pointer hover:bg-sidebar-accent/50 rounded-sm transition-colors text-white'
+                >
                   {chat.title}
-                </SelectItem>
-              ))
-            : 'Você não possui treinos cadastrados. Interaja com o Trainify!'}
-        </SelectContent>
-      </Select>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='py-2 text-xs text-muted-foreground'>
+              Você não possui treinos cadastrados. Interaja com o Trainify!
+            </div>
+          )}
+        </CollapsibleContent>
+      </Collapsible>
     );
   }
 
   return (
-    <ChatButton
-      variant='button'
+    <Button
+      variant='ghost'
+      className='w-full justify-start px-3 py-2 h-auto text-sm'
       onClick={() =>
         toast.error('Para acessar seus treinos, você precisa estar logado.')
       }
     >
-      {<Dumbbell width={20} height={20} />}Meus Treinos
-    </ChatButton>
+      <Dumbbell className='h-4 w-4 mr-2' />
+      <span>Meus Treinos</span>
+    </Button>
   );
 }

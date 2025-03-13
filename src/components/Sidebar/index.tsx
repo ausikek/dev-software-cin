@@ -11,8 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import ChatButton from '@/components/ChatButton';
-import { SelectScrollable } from '../SelectTraining';
+import { WorkoutCollapsible } from '../SelectTraining';
 import { useSession } from 'next-auth/react';
 import { LoginModal } from '../LoginModal';
 import LogoutButton from '../LogoutButton';
@@ -30,15 +29,18 @@ export default function AppSidebar() {
             Trainify IA
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className='flex flex-col gap-2 pt-4'>
               <SidebarMenuItem>
-                <Link className='flex flex-col gap-2 pt-5' href={'/'}>
-                  <ChatButton variant='button'>
-                    <MessageSquare />
-                    Novo Chat
-                  </ChatButton>
-                  <SelectScrollable />
+                <Link
+                  className='flex flex-row gap-2 px-3 hover:bg-sidebar-accent/50 transition-colors text-white items-center py-2'
+                  href={'/'}
+                >
+                  <MessageSquare className='h-4 w-4' />
+                  Novo Chat
                 </Link>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <WorkoutCollapsible />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
