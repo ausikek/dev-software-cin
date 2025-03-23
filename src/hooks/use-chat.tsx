@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import useSWR from 'swr';
-import type { Content } from '@google/generative-ai';
-import type { ParsedChatHistory } from '@/types';
 import { config } from '@/lib/utils';
 import { fetcher } from '@/lib/fetcher';
+import { toast } from 'sonner';
+import { ChatHistory } from '@prisma/client';
+import type { Content } from '@google/generative-ai';
+import type { ParsedChatHistory } from '@/types';
+import useSWR from 'swr';
+import { JsonValue } from '@prisma/client/runtime/library';
 
 export function useChat(chatId?: string) {
   const { data: session } = useSession();
@@ -15,20 +18,33 @@ export function useChat(chatId?: string) {
   const [parsedChatHistory, setParsedChatHistory] = useState<
     ParsedChatHistory[]
   >([]);
-  const [chatHistory, setChatHistory] = useState<Content[]>([]);
+  const [chatHistory, setChatHistory] = useState<Content[] | JsonValue[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data } = useSWR(
-    chatId ? `${config.apiURL}/api/chats/${chatId}` : null,
+  const { data } = useSWR<ChatHistory>(
+    chatId && session?.user.id ? `${config.apiURL}/api/chats/${chatId}` : null,
     fetcher
   );
 
   useEffect(() => {
     if (data) {
+      if (!data.history) {
+        router.replace('/');
+        toast.error('Chat não encontrado');
+        return;
+      }
+
+      if (data.userId !== session?.user.id) {
+        router.replace('/');
+        toast.error('Você não tem permissão para acessar este chat');
+        return;
+      }
+
       setChatHistory([...data.history]);
+      // @ts-expect-error Let's ignore this error for now
       setParsedChatHistory([...data.parsedHistory]);
     }
-  }, [data]);
+  }, [data, router, session]);
 
   const submitPrompt = async (prompt: string) => {
     const userMessage: ParsedChatHistory = {
