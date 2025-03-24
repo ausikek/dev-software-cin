@@ -12,6 +12,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { useRouter } from 'next/navigation';
+import { DeleteModal } from '../DeleteModal';
 
 export function WorkoutCollapsible() {
   const { status, data } = useSession();
@@ -43,10 +44,10 @@ export function WorkoutCollapsible() {
               {user.chatHistory.map((chat) => (
                 <div
                   key={chat.id}
-                  onClick={() => navigateToWorkout(chat.id)}
-                  className='px-2 py-1.5 text-xs cursor-pointer hover:bg-sidebar-accent/50 rounded-sm transition-colors text-white'
+                  className='px-2 py-1.5 text-xs cursor-pointer hover:bg-sidebar-accent/50 rounded-sm transition-colors text-white flex flex-row justify-between'
                 >
-                  {chat.title}
+                  <p onClick={() => navigateToWorkout(chat.id)}>{chat.title}</p>
+                  <DeleteModal chatId={chat.id} />
                 </div>
               ))}
             </div>
